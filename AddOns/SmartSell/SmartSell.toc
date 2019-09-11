@@ -1,0 +1,16 @@
+## Interface: 11302
+## Title: Smart|cffffffffSell|r by |cff00ff00Aeldra|r
+## Version: 1.13.2c
+## Author: |cff20d2ffAeldra|r (EU-Proudmoore)
+## Notes: Adds additional item information to any tooltip.
+## eMail: aeldra@sonnenkinder.org
+## DefaultState: Enabled
+## LoadOnDemand: 0
+## SavedVariables: SmartSellDB
+
+localization.lua
+localization.de.lua
+localization.fr.lua
+localization.es.lua
+localization.ru.lua
+SmartSell.lua
