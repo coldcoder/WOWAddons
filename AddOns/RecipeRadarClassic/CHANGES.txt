@@ -1,48 +1,22 @@
-lightweight tag f25783b917a711fc02de3c649acddc485d0f7a3e 1.0.0.3-beta
+lightweight tag 0f217f6d9b0feb7df40b3a217fba877e6aef7b88 1.0.0.8-beta
 Author:	Yunohu <kernighan@gmail.com>
-Date:	Wed Sep 11 00:20:44 2019 +0000
+Date:	Fri Sep 20 00:15:52 2019 +0000
 
-commit f25783b917a711fc02de3c649acddc485d0f7a3e
+commit 0f217f6d9b0feb7df40b3a217fba877e6aef7b88
 Author: Yunohu <kernighan@gmail.com>
-Date:   Wed Sep 11 00:20:44 2019 +0000
+Date:   Fri Sep 20 00:15:52 2019 +0000
 
-    Bump version to 1.0.0.3
+    Version 1.0.0.8
 
-commit 08beee654bc28e931c0abdefa1b7138ec008d823
+commit 3e0be6c4746ff1b94ca6c99aa38c9e86ef3b061c
 Author: Yunohu <kernighan@gmail.com>
-Date:   Wed Sep 11 00:15:41 2019 +0000
+Date:   Fri Sep 20 00:08:00 2019 +0000
 
-    re #8 #13 more fixes for continent changes and lack of instance names
+    Fix issue where database wasn't recording known recipes correctly
 
-commit 5b039afc8034c8c7510737550ad59c65d78ed98e
+commit 8209d128bb2314eee83b2fb9d47615149657a40d
 Author: Yunohu <kernighan@gmail.com>
-Date:   Wed Sep 11 00:03:06 2019 +0000
+Date:   Wed Sep 18 16:21:19 2019 +0000
 
-    re #8 re #13 - Change continent values to be the actual continent ID
-
-commit 0f333b57722d0ae31f327ac2c1c72a9c37c177ef
-Author: Yunohu <kernighan@gmail.com>
-Date:   Tue Sep 10 23:50:32 2019 +0000
-
-    Fix #8 - Set the cosmic map ID to be 947 (Azeroth) as there are no other worlds in Classic
-
-commit 434162f0055e0a6024d326bdf6e34897d6a169d6
-Author: Yunohu <kernighan@gmail.com>
-Date:   Tue Sep 10 23:35:45 2019 +0000
-
-    Fix #8 -- Need to define COSMIC_MAP_ID
-
-commit 2a85c898a1a3c0618e64ff6c2aa4ed23ad61a40c
-Author: Yunohu <kernighan@gmail.com>
-Date:   Tue Sep 10 23:27:16 2019 +0000
-
-    Fix #13 -- Localize instance names since C_Map.GetMapInfo does not return them
-
-commit b39c57c113363ecf246dcc973b21e06713cf6c23
-Author: Yunohu <kernighan@gmail.com>
-Date:   Tue Sep 10 19:52:27 2019 +0000
-
-    re #8 -- Need to replace GetMapZones as well, as it was also removed
-    
-    Allows options panel to work somewhat better, but it still needs more work
+    Fix #23 -- Update koKR.lua to fix encoding
 

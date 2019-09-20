@@ -38,11 +38,11 @@ end
 
 -- Draw the supplied button on the world map.
 function RecipeRadar_Worldmap_UpdateButton(button)
-
-   local HBDP = LibStub("HereBeDragons-Pins-2.0")
-   HBDP:AddWorldMapIconMap(self, button, button.RegionID, button.Vendor.Coordinates[1].x,
-         button.Vendor.Coordinates[1].y, 3)
-
+   if TomTom then 
+     TomTom:AddWaypoint(button.RegionID, button.Vendor.Coordinates[1].x, button.Vendor.Coordinates[1].y, {
+       title = button.Vendor.Name
+     })
+   end
 end
 
 -- Redraw buttons on the current world map.

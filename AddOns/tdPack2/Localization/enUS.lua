@@ -7,6 +7,12 @@ if not L then return end
 --@end-debug@]===]
 L["<Left Click> "] = true
 L["<Right Click> "] = true
+L["Enable chat message"] = true
+L["KeywordClass"] = "Classes"
+L["KeywordConjuredItem"] = "Conjured Item"
+L["KeywordFood"] = "Must remain seated while eating"
+L["KeywordMount"] = "Summons and dismisses"
+L["KeywordWater"] = "Must remain seated while drinking"
 L["Leave bank, pack cancel."] = true
 L["Open options"] = true
 L["Pack bags"] = true
@@ -35,5 +41,12 @@ L['<Left Click> '] = true
 L['<Right Click> '] = true
 L['Pack bags'] = true
 L['Reverse Pack'] = true
+L['Enable chat message'] = true
 L['Open options'] = true
+
+L.KeywordMount = 'Summons and dismisses'
+L.KeywordFood = 'Must remain seated while eating'
+L.KeywordWater = 'Must remain seated while drinking'
+L.KeywordClass = 'Classes'
+L.KeywordConjuredItem = 'Conjured Item'
 --@end-debug@]===]

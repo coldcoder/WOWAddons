@@ -5,6 +5,8 @@ This addon will add colored border items for :
 - inspect pane
 - bags
 - bank
+- merchant frame
+- professions
 
 In bags and bank, items with green quality and more will have a colored border according their quality.
 Quest items are also colorized with a yellow border.

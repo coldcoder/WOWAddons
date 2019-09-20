@@ -1,5 +1,5 @@
 ## Interface: 11302
-## Version: 1.0.0.3
+## Version: 1.0.0.8
 ## Title: Recipe Radar Classic
 ## Author: Kernighan
 ## X-Contributor: speedwaystar, SecureAgent, Kernighan, Yunohu, Jay Miller
@@ -16,10 +16,12 @@ embeds.xml
 #@end-no-lib-strip@
 
 locales\enUS.lua
+locales\esES.lua
 locales\deDE.lua
 locales\frFR.lua
-locales\esES.lua
+locales\koKR.lua
 locales\ruRU.lua
+locales\zhCN.lua
 locales\zhTW.lua
 
 Globals.lua

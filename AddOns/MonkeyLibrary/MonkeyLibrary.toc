@@ -1,4 +1,4 @@
-﻿## Interface: 80200
+﻿## Interface: 11302
 ## Title: MonkeyLibrary v2.10.2
 ## Notes: Common files and functions for MonkeyMods.
 ## Notes-deDE: Gemeinsame Dateien und Funktionen fuer MonkeyMods.

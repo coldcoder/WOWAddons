@@ -1,10 +1,29 @@
-tag 54d2e666ad9b90c892494491371314a529955cd5 0.0.4
+tag be1cb2c6e48150d996531b2cfb79f44a3b47cd8b 0.0.6
 Author:	Dencer <tdaddon@163.com>
-Date:	Fri Sep 6 02:25:33 2019 +0800
+Date:	Wed Sep 18 02:29:10 2019 +0800
 
-commit 8593efd4e57d81bc466e4440ddb9d1c5abd936ad
-Author: unknown <S1596@wowshga.internal>
-Date:   Tue Sep 3 20:12:47 2019 +0800
+commit a47ea53438360b5444ea23228562fc240b51fd50
+Author: Dencer <tdaddon@163.com>
+Date:   Wed Sep 18 02:26:36 2019 +0800
 
-    feat: 支持背包Inventorian
+    feat: 不同数量的物品整理后将有序
+    feat: 魔法制造的物品将放在普通物品和垃圾之间
+
+commit ec7899969ca54ee2d5497d82df41f360bb3d27b4
+Author: Dencer <tdaddon@163.com>
+Date:   Wed Sep 18 02:23:45 2019 +0800
+
+    feat: 添加是否显示通知的开关
+
+commit dedbef2ec955554e4c40eec8b7aad80d39d7e947
+Author: Dencer <tdaddon@163.com>
+Date:   Wed Sep 18 02:23:21 2019 +0800
+
+    feat: 添加是否显示通知的开关
+
+commit 26f74a019c1f6fdad72e651d495013e5b59e3ced
+Author: Dencer <tdaddon@163.com>
+Date:   Fri Sep 13 03:29:08 2019 +0800
+
+    feat: 优化堆叠，支持数量排序
 

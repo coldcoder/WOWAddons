@@ -153,7 +153,10 @@ function RecipeRadar_OnLoad(self)
 
    self:RegisterEvent("VARIABLES_LOADED")
    self:RegisterEvent("ZONE_CHANGED_NEW_AREA")
+   self:RegisterEvent("TRADE_SKILL_SHOW")
    self:RegisterEvent("TRADE_SKILL_UPDATE")
+   self:RegisterEvent("CRAFT_SHOW")
+   self:RegisterEvent("CRAFT_UPDATE")
    self:RegisterEvent("CHAT_MSG_SKILL")
    self:RegisterEvent("CHAT_MSG_SYSTEM")
    self:RegisterEvent("PLAYER_ENTERING_WORLD")
@@ -199,9 +202,13 @@ function RecipeRadar_OnEvent(self, event, ...)
                [RecipeRadar_GetOpposingFaction("player")] = true
       end
 
-   elseif (event == "TRADE_SKILL_UPDATE") then
+   elseif (event == "TRADE_SKILL_UPDATE" or event == "TRADE_SKILL_SHOW") then
 
       RecipeRadar_SkillDB_Refresh("trade")
+
+   elseif (event == "CRAFT_SHOW" or event == "CRAFT_UPDATE") then
+
+      RecipeRadar_SkillDB_Refresh("craft")
 
    elseif (event == "CHAT_MSG_SKILL") then
 

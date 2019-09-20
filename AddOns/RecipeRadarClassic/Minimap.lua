@@ -3,8 +3,6 @@
 -- $Id: Minimap.lua 1031 2008-03-27 05:41:46Z jnmiller $
 -- Note: the mapping code in here is from MapNotes, by Sir.Bender, et al.
 
-local HBDP = LibStub("HereBeDragons-Pins-2.0")
-
 -- Initializes the state of the minimap overlays and settings.
 function RecipeRadar_Minimap_Init()
 
@@ -19,8 +17,9 @@ end
 function RecipeRadar_Minimap_OnNewRegion()
 
    local mapID = C_Map.GetBestMapForUnit("player")
-   if (not mapID) then return end
-   WorldMapFrame:SetMapID(mapID)
+   if mapID ~= nil then
+     WorldMapFrame:SetMapID(mapID)
+   end
    for i = 1, RECIPERADAR_MAPPED_VENDORS_MAX do
       local button = _G["RecipeRadarMinimapIcon" .. i]
       if (button.IsMapped and button.Region == mapID) then
@@ -42,7 +41,14 @@ function RecipeRadar_Minimap_AddVendor(id, vendor, region)
    button.IsMapped = true
    
    local continent = RecipeRadar_RegionData[region].Continent
-   HBDP:AddMinimapIconMap(self, button, region, vendor.Coordinates[1].x, vendor.Coordinates[1].y, true, true)
+
+   if TomTom then
+     TomTom:AddWaypoint(region, vendor.Coordinates[1].x, vendor.Coordinates[1].y, {
+       title = vendor.Name
+     })
+   else
+     RecipeRadar_Print("TomTom required for waypoints")
+   end
 end
 
 -- Resets and unmaps the given icon.
@@ -54,6 +60,4 @@ function RecipeRadar_Minimap_RemoveVendor(id)
    button.Region = nil
    button.IsMapped = false
    
-   HBDP:RemoveIconFromMinimap(button)
-
 end

@@ -100,17 +100,23 @@ function RecipeRadar_SkillDB_Refresh(prof_type)
 
    if (not RecipeRadar_RecipeData[prof_name].Recipes) then return end
    -- iterate over each listed recipe in the currently open skill window
-    for i = 1, GetNumTradeSkills() do
-      local recipe, hdr = GetTradeSkillInfo(i)
+    for i = 1, RecipeRadar_SkillDB_GetRecipeCount(prof_type) do
+      local recipe, hdr = RecipeRadar_SkillDB_GetRecipeInfo(prof_type, i)
       if (recipe and hdr ~= "header") then
-        local itemLink = GetTradeSkillItemLink(i)
-        local itemID = itemLink:match("item:(%d+)")
+        local itemID = RecipeRadar_SkillDB_GetItemLink(prof_type, i)
+        itemID = tonumber(itemID)
 		if(itemID) then
 		  local recipeTable = RecipeRadar_RecipeData[prof_name].Recipes
 		  for _, recipe in pairs(RecipeRadar_RecipeData[prof_name].Recipes) do
-            if(tonumber(recipe.Item) == tonumber(itemID)) then
-              profs[prof_name].Spell[recipe.Spell]=1
-		    end
+            if(prof_type == "trade") then
+              if(tonumber(recipe.Item) == itemID) then
+                profs[prof_name].Spell[recipe.Spell]=1
+		      end
+            elseif(prof_type == "craft") then
+              if(tonumber(recipe.Spell) == itemID) then
+                profs[prof_name].Spell[recipe.Spell]=1
+		      end
+            end
           end
 		end
       end
@@ -305,10 +311,32 @@ function RecipeRadar_SkillDB_GetRecipeCount(prof_type)
 end
 
 function RecipeRadar_SkillDB_GetRecipeInfo(prof_type, index)
+   local name, hdr
 
-   local name, hdr = GetTradeSkillInfo(index)
+   if (prof_type == "trade") then
+      name, hdr = GetTradeSkillInfo(index)
+   elseif (prof_type == "craft") then
+      name, _, hdr = GetCraftInfo(index)
+   end
 
    return name, hdr
+
+end
+
+function RecipeRadar_SkillDB_GetItemLink(prof_type, index)
+  local itemLink, itemID
+  
+  if (prof_type == "trade") then
+    itemLink = GetTradeSkillItemLink(index)
+    if (not itemLink) then return end
+    itemID = itemLink:match("item:(%d+)")
+  elseif (prof_type == "craft") then
+    itemLink = GetCraftItemLink(index)
+    if (not itemLink) then return end
+    itemID = itemLink:match("enchant:(%d+)")
+  end
+
+  return tonumber(itemID)
 
 end
 
