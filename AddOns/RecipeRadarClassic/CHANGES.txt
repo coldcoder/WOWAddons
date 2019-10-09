@@ -1,22 +1,22 @@
-lightweight tag 0f217f6d9b0feb7df40b3a217fba877e6aef7b88 1.0.0.8-beta
+lightweight tag f0cc882d28893ebb27eff23768244b14de4d5923 1.0.0.20-beta
 Author:	Yunohu <kernighan@gmail.com>
-Date:	Fri Sep 20 00:15:52 2019 +0000
+Date:	Thu Sep 26 21:19:54 2019 +0000
 
-commit 0f217f6d9b0feb7df40b3a217fba877e6aef7b88
+commit f0cc882d28893ebb27eff23768244b14de4d5923
 Author: Yunohu <kernighan@gmail.com>
-Date:   Fri Sep 20 00:15:52 2019 +0000
+Date:   Thu Sep 26 21:19:54 2019 +0000
 
-    Version 1.0.0.8
+    Version 1.0.0.20
 
-commit 3e0be6c4746ff1b94ca6c99aa38c9e86ef3b061c
+commit 0070746c4674db1c62f16df976909cd931afb80a
 Author: Yunohu <kernighan@gmail.com>
-Date:   Fri Sep 20 00:08:00 2019 +0000
+Date:   Thu Sep 26 21:19:44 2019 +0000
 
-    Fix issue where database wasn't recording known recipes correctly
+    Fix loading LibTourist
 
-commit 8209d128bb2314eee83b2fb9d47615149657a40d
+commit d76519a466c252f49b822fc5f2c7a37d1e137427
 Author: Yunohu <kernighan@gmail.com>
-Date:   Wed Sep 18 16:21:19 2019 +0000
+Date:   Thu Sep 26 20:36:13 2019 +0000
 
-    Fix #23 -- Update koKR.lua to fix encoding
+    Drop mapIDs file
 

@@ -65,6 +65,9 @@ Please send me a mail or write a comment, if you discover Bugs or have Suggestio
 Changes: 
 Rev     Date        Description
 ------  ----------  -----------------------
+1.13.2d 2019-09-23  Fixed blinking display on recipes
+                    Added chinese translation
+					
 1.13.2c 2019-09-10  Fixed double icon and money display on recipes
 
 1.13.2b 2019-09-07  Refactoring and cleanup

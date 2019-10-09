@@ -457,7 +457,12 @@ local function DrawRouteLineCustom(T, C, sx, sy, ex, ey, w, extend, relPoint)
 
 	-- Set texture coordinates and anchors
 	T:ClearAllPoints();
-	T:SetTexCoord(TLx, TLy, BLx, BLy, TRx, TRy, BRx, BRy);
+	-- Hack to fix backwards arrow since it's easier to fix here than figure out wtf is going on up above
+	if reverse == 1 then
+		T:SetTexCoord(TLx, TLy, BLx, BLy, TRx, TRy, BRx, BRy);
+	else
+		T:SetTexCoord(BRx, BRy, TRx, TRy, BLx, BLy, TLx, TLy);
+	end
 	T:SetPoint("BOTTOMLEFT", C, relPoint, cx - Bwid, cy - Bhgt);
 	T:SetPoint("TOPRIGHT",   C, relPoint, cx + Bwid, cy + Bhgt);
 end
@@ -1320,7 +1325,15 @@ function mod:RegisterEncounterMarker(spellid, name, marker)
 	marker.RegisterCallback(self, "Free", "FreeEncounterMarker", key)
 end
 
-function mod:RegisterPositionMarker(spellid, name, texture, x, y, radius, duration, r, g, b, a, blend)
+function mod:RegisterPositionMarker(spellid, name, texture, x, y, radius, duration, r, g, b, a, blend, localMap, AreaID)
+	if localMap then
+		if x >= 0 and x <= 100 and y >= 0 and y <= 100 then
+			local localMap = tonumber(AreaID) or C_Map.GetBestMapForUnit("player")
+			local vector = CreateVector2D(x/100, y/100)
+			local _, temptable = C_Map.GetWorldPosFromMapPos(localMap, vector)
+			x, y = temptable.x, temptable.y
+		end
+	end
 	local marker = encounterMarkers[spellid..name]
 	if marker ~= nil then return marker end
 	marker = Point:New(self.currentMap, x, y, nil, duration, texture, radius, blend, r, g, b, a)
@@ -1374,6 +1387,10 @@ function mod:FreeEncounterMarker(key)
 	if activeMarkers == 0 then--No markers left, disable hud
 		self:Disable()
 	end
+end
+
+function mod:GetEncounterMarker(key)
+	return encounterMarkers[key]
 end
 
 -- should be called to manually free marker
@@ -1431,7 +1448,11 @@ function mod:SetZoom(zoom, zoomChange)
 end
 
 function mod:SetFixedZoom(zoom)
-	fixedZoomScale = zoom
+	if type(zoom) == "number" then
+		fixedZoomScale = zoom
+	else
+		fixedZoomScale = nil
+	end
 end
 
 function mod:Update()

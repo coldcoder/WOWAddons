@@ -5,10 +5,10 @@ if not L then return end
 L["Recipe Radar Classic"] = "Recipe Radar Classic"
 
 L["Left-click to open RecipeRadar."] = "RecipeRadar를 실행하려면 클릭하세요."
-L["Right-click and drag to move this button."] = "우 클릭 후 마우스를 끌어 이 버튼을 움직이세요."
+L["Right-click and drag to move this button."] = "이 버튼을 움직이려면 우클릭으로 드래그합니다."
 
    -- these show up in the game's Key Bindings screen
-L["Recipe Radar Bindings"] = "Recipe Radar 키 설정"
+L["Recipe Radar Bindings"] = "Recipe Radar 단축키"
 L["Toggle Recipe Radar"] = "Recipe Radar 실행전환"
 
    -- options button and corresponding options frame
@@ -20,29 +20,29 @@ L["Minimap Button Position"] = "미니맵 버튼 위치"
 L["Show Minimap Button"] = "미니맵 버튼 표시"
 
    -- format strings used in the map tooltips
-L["1 recipe"] = "1 도안"
-L["%d learnable"] = "%d 도안 배울 수 있음"
-L["%d recipes"] = "%d 도안"
+L["1 recipe"] = "1개의 도안"
+L["%d learnable"] = "%d개 배울 수 있음"
+L["%d recipes"] = "%d개의 도안"
 
    -- this appears when the recipe is not in your local database
-L["Uncached Recipe"] = "찾을 수 없는 레시피"
+L["Uncached Recipe"] = "찾을 수 없는 도안"
 
    -- uncached recipe tooltip - see RecipeRadar_Availability_CreateTooltip()
-L["You may mouse over the"] = "도안을 보고 싶다면"
-L["icon to lookup this recipe."] = "마우스 커서를 올리세요."
-L["Warning: if your server has"] = "경고: 이 아이템이"
-L["not yet seen this item, you"] = "보이지 않는다면,"
-L["will be disconnected!"] = "서버와의 연결이 끊어진 것입니다."
+L["You may mouse over the"] = "이 도안을 보려면"
+L["icon to lookup this recipe."] = "아이콘에 마우스를 올리세요."
+L["Warning: if your server has"] = "경고: 서버에 이 아이템을"
+L["not yet seen this item, you"] = "아직 본적이 없다면,"
+L["will be disconnected!"] = "접속이 종료될 수 있음!"
 
    -- some regions don't have any recipes for sale
-L["No recipes for sale in this region."] = "이 지역에서 레시피를 찾을 수 없습니다."
+L["No recipes for sale in this region."] = "이 지역에서 판매하는 도안이 없음."
 
    -- radio button (and tooltip) that indicates a mapped vendor
 L["Locate Vendor on Map"] = "지도에 도안판매자 표시"
-L["Shift-click a vendor to add or remove her location on the world map."] = "판매자에 쉬프트-클릭하여 월드맵에 위치를 추가하거나 제거하십시오."
+L["Shift-click a vendor to add or remove her location on the world map."] = "판매자에 쉬프트-클릭으로 지도에서 위치를 추가하거나 제거합니다."
 
    -- strings in the faction filtering dropdown; we don't need 'Horde' or 'Alliance' because Blizzard provides them for us
-L["Factions"] = "세력"
+L["Factions"] = "진영"
 L["Neutral"] = "중립"
 
    -- profession filtering dropdown - these strings must match those returned by GetTradeSkillLine() and GetCraftDisplaySkillLine()
@@ -51,20 +51,20 @@ L["Alchemy"] = "연금술"
 L["Blacksmithing"] = "대장기술"
 L["Cooking"] = "요리"
 L["Enchanting"] = "마법부여"
-L["Engineering"] = "기술공학"
+L["Engineering"] = "기계공학"
 L["First Aid"] = "응급치료"
 L["Fishing"] = "낚시"
 L["Herbalism"] = "약초채집"
 L["Leatherworking"] = "가죽세공"
 L["Mining"] = "채광"
-L["Poisons"] = "포션"
+L["Poisons"] = "독 조제"
 L["Skinning"] = "무두질"
 L["Tailoring"] = "재봉술"
 
    -- strings in the availability filtering dropdown
 L["Availability"] = "이용가능"
-L["Already Known (Alts)"] = "이미 배움 (다른캐릭)"
-L["Already Known (Player)"] = "이미 배움 (플레이어)"
+L["Already Known (Alts)"] = "이미 배운 조제법 (다른캐릭)"
+L["Already Known (Player)"] = "이미 배운 조제법 (플레이어)"
 L["Available Now (Alts)"] = "배울 수 있음 (다른캐릭)"
 L["Available Now (Player)"] = "배울 수 있음 (플레이어)"
 L["Future Prospect (Alts)"] = "나중에 배울 수 있음 (다른캐릭)"
@@ -77,13 +77,13 @@ L["Already Known By:"] = "이미 배움:"
 L["Future Prospect For:"] = "나중에 배울 수 있음:"
 
    -- format string for rank indicator for future prospects; that is, it tells you how soon you can learn the recipe - eg. "163 of 175"
-L["%d of %d"] = "%d, 총 %d"
+L["%d of %d"] = "%d / %d"
 
    -- special notes for vendor requirements follow vendor names (eg. "Seasonal Vendor")
 L["%s Vendor"] = "%s 판매자"
 L["Intermittent"] = "종종 나타나는"
 L["Quest"] = "퀘스트"
-L["Roving"] = "방랑하는"
+L["Roving"] = "방랑"
 L["Seasonal"] = "시즌"
 
    -- other recipe requirements
@@ -102,15 +102,15 @@ L["Map Vendor"] = "판매자 표시"
 
    -- trade skill specialties
 L["Gnomish Engineer"] = "노움 기계공학"
-L["Armorsmith"] = "방어구제작"
+L["Armorsmith"] = "방어구 제작자"
 L["Dragonscale Leatherworking"] = "용비늘 가죽세공"
 L["Elemental Leatherworking"] = "원소 가죽세공"
 L["Goblin Engineer"] = "고블린 기술자"
-L["Master Axesmith"] = "검 제작의 대가"
-L["Master Hammersmith"] = "둔기 제작의 대가"
-L["Master Swordsmith"] = "칼 제작의 대가"
-L["Tribal Leatherworking"] = "부족 가죽세공"
-L["Weaponsmith"] = "무기제작"
+L["Master Axesmith"] = "도끼 제작의 대가"
+L["Master Hammersmith"] = "망치 제작의 대가"
+L["Master Swordsmith"] = "검 제작의 대가"
+L["Tribal Leatherworking"] = "전통 가죽세공"
+L["Weaponsmith"] = "무기 제작자"
 
    -- continent names for alternate region selection
 L["Kalimdor"] = "칼림도어"

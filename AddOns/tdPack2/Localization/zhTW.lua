@@ -5,30 +5,53 @@ if not L then return end
 --[===[@debug@
 --[[
 --@end-debug@]===]
-L["<Left Click> "] = "單擊"
-L["<Right Click> "] = "右擊"
+--[[Translation missing --]]
+--[[ L["Bag button features"] = ""--]] 
+--[[Translation missing --]]
+--[[ L["Bank button features"] = ""--]] 
 --[[Translation missing --]]
 --[[ L["Enable chat message"] = ""--]] 
 --[[Translation missing --]]
---[[ L["KeywordClass"] = ""--]] 
+--[[ L["KEYWORD_CLASS"] = ""--]] 
 --[[Translation missing --]]
---[[ L["KeywordConjuredItem"] = ""--]] 
+--[[ L["KEYWORD_CONJURED_ITEM"] = ""--]] 
 --[[Translation missing --]]
---[[ L["KeywordFood"] = ""--]] 
+--[[ L["KEYWORD_FOOD"] = ""--]] 
 --[[Translation missing --]]
---[[ L["KeywordMount"] = ""--]] 
+--[[ L["KEYWORD_MOUNT"] = ""--]] 
 --[[Translation missing --]]
---[[ L["KeywordWater"] = ""--]] 
+--[[ L["KEYWORD_WATER"] = ""--]] 
 L["Leave bank, pack cancel."] = "離開銀行，整理中止。"
-L["Open options"] = "打開設置"
-L["Pack bags"] = "整理背包"
+--[[Translation missing --]]
+--[[ L["Left Click"] = ""--]] 
+--[[Translation missing --]]
+--[[ L["None"] = ""--]] 
+--[[Translation missing --]]
+--[[ L["OPEN_OPTIONS"] = ""--]] 
 L["Pack finish."] = "整理完成"
 L["Packing now"] = "正在整理"
 L["Player enter combat, pack cancel."] = "進入戰鬥，整理中止。"
 L["Player in combat"] = "正在戰鬥"
 L["Player is dead"] = "角色已死亡"
 L["Please drop the item, money or skills."] = true
-L["Reverse Pack"] = "反向整理"
+--[[Translation missing --]]
+--[[ L["Reverse pack"] = ""--]] 
+--[[Translation missing --]]
+--[[ L["Right Click"] = ""--]] 
+--[[Translation missing --]]
+--[[ L["SORT"] = ""--]] 
+--[[Translation missing --]]
+--[[ L["SORT_BAG"] = ""--]] 
+--[[Translation missing --]]
+--[[ L["SORT_BAG_ASC"] = ""--]] 
+--[[Translation missing --]]
+--[[ L["SORT_BAG_DESC"] = ""--]] 
+--[[Translation missing --]]
+--[[ L["SORT_BANK"] = ""--]] 
+--[[Translation missing --]]
+--[[ L["SORT_BANK_ASC"] = ""--]] 
+--[[Translation missing --]]
+--[[ L["SORT_BANK_DESC"] = ""--]] 
 
 --[===[@debug@
 --]]

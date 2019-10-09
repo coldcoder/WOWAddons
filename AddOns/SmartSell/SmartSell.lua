@@ -9,7 +9,7 @@
 local SetTooltipMoney_Base = SetTooltipMoney;
 
 local Title = "SmartSell";
-local Version = "1.13.2c";
+local Version = "1.13.2d";
 local TitleVersion = Title.." "..Version;
 
 local SmartSell = {};
@@ -187,8 +187,9 @@ local function AddToTooltip(self, itemLinkId, itemCount, mode)
   local itemName, itemLink, _, itemLevel, _, itemType, itemSubType, itemStackCount, _, itemTex, itemValue, classId, subclassId = GetItemInfo(itemLinkId);
   --print(itemName, itemType, classId, itemSubType, subclassId, itemStackCount, itemValue);
   
-  -- Recipe
-  if (classId == 9) then
+  -- Recipe, not Book, not Enchanting
+  if (classId == 9 and subclassId ~= 0 and subclassId ~= 8) then
+    --print(classId, subclassId);
     recipe = recipe + 1;
     -- Skip first to avoid display of double money count
     if (recipe % 2 == 1) then return end
