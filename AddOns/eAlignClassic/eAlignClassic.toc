@@ -1,0 +1,6 @@
+## Interface: 11302
+## Author: Lohkin
+## Version: Classic
+## Title: eAlign|cffffffffClassic |r
+## Notes: A simple alignment grid.  Use |cffffd700/align|r to toggle on and off.
+eAlignClassic.lua

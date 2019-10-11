@@ -62,14 +62,14 @@ function AutoLoot:ShowLootFrame(show)
 			ElvLootFrame:SetParent(self)
 			self.isHidden = true
 		end
-	elseif LootFrame:IsEventRegistered("LOOT_SLOT_CLEARED") then
-        LootFrame.page = 1;
-        LootFrame.selectedQuality = LootFrame.selectedQuality or 1
-		if show then
+	elseif LootFrame:IsEventRegistered("LOOT_OPENED") then
+        if show then
+            LootFrame:SetParent(UIParent)
+            LootFrame:SetFrameStrata("HIGH")
 			self:LootUnderMouse(LootFrame, UIParent)
-			LootFrame_Show(LootFrame)
 			self.isHidden = false
-		else
+        else
+            LootFrame:SetParent(self)
 			self.isHidden = true
 		end
 	end
@@ -238,7 +238,5 @@ SLASH_SPEEDYAUTOLOOT1, SLASH_SPEEDYAUTOLOOT2, SLASH_SPEEDYAUTOLOOT3  = "/sal", "
 SlashCmdList["SPEEDYAUTOLOOT"] = function(...)
     AutoLoot:Help(...)
 end
-
-LootFrame:UnregisterEvent("LOOT_OPENED")
 
 AutoLoot:OnLoad()

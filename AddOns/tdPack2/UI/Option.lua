@@ -8,7 +8,7 @@ local ADDON, ns = ...
 local Addon = ns.Addon
 local L = ns.L
 
-function Addon:LoadOptionFrame()
+function Addon:InitOptionFrame()
     local index = 0
     local function orderGen()
         index = index + 1
@@ -62,13 +62,15 @@ function Addon:LoadOptionFrame()
                 values = {
                     {name = L['None'], value = false}, --
                     {name = L.SORT, value = 'SORT'}, --
+                    {name = L.SORT_ASC, value = 'SORT_ASC'}, --
+                    {name = L.SORT_DESC, value = 'SORT_DESC'}, --
                     {name = L.SORT_BAG, value = 'SORT_BAG'}, --
                     {name = L.SORT_BAG_ASC, value = 'SORT_BAG_ASC'}, --
                     {name = L.SORT_BAG_DESC, value = 'SORT_BAG_DESC'}, --
                     {name = L.SORT_BANK, value = 'SORT_BANK'}, --
                     {name = L.SORT_BANK_ASC, value = 'SORT_BANK_ASC'}, --
                     {name = L.SORT_BANK_DESC, value = 'SORT_BANK_DESC'}, --
-                    -- {name = L.OPEN_RULE_OPTIONS, value = 'OPEN_RULE_OPTIONS'}, --
+                    {name = L.OPEN_RULE_OPTIONS, value = 'OPEN_RULE_OPTIONS'}, --
                     {name = L.OPEN_OPTIONS, value = 'OPEN_OPTIONS'}, --
                 },
                 get = function()
@@ -83,18 +85,32 @@ function Addon:LoadOptionFrame()
         return g
     end
 
+    local charProfileKey = format('%s - %s', UnitName('player'), GetRealmName())
+
     local options = {
         type = 'group',
         name = ADDON,
 
         get = function(item)
-            return self.db.profile[item[#item]]
+            return self:GetOption(item[#item])
         end,
         set = function(item, value)
-            self.db.profile[item[#item]] = value
+            self:SetOption(item[#item], value)
         end,
 
         args = {
+            profile = {
+                type = 'toggle',
+                name = L['Character Specific Settings'],
+                width = 'double',
+                order = orderGen(),
+                set = function(_, checked)
+                    self.db:SetProfile(checked and charProfileKey or 'Default')
+                end,
+                get = function()
+                    return self.db:GetCurrentProfile() == charProfileKey
+                end,
+            },
             general = {
                 type = 'group',
                 name = GENERAL,
@@ -102,10 +118,27 @@ function Addon:LoadOptionFrame()
                 args = {
                     reverse = {type = 'toggle', name = L['Reverse pack'], width = 'full', order = orderGen()},
                     console = {type = 'toggle', name = L['Enable chat message'], width = 'full', order = orderGen()},
+                    -- applyLibItemSearch = {
+                    --     type = 'toggle',
+                    --     name = L['Apply to LibItemSearch'],
+                    --     width = 'full',
+                    --     order = orderGen(),
+                    -- },
+                    resetSorting = {
+                        type = 'execute',
+                        name = L['Reset sorting rules'],
+                        width = 'full',
+                        order = orderGen(),
+                        confirm = true,
+                        confirmText = L['Are you sure to |cffff1919RESET|r sorting rules?'],
+                        func = function()
+                            Addon:ResetSortingRules()
+                        end,
+                    },
                 },
             },
-            bag = generateButton('bag', L['Bag button features']),
-            bank = generateButton('bank', L['Bank button features']),
+            [ns.BAG_TYPE.BAG] = generateButton(ns.BAG_TYPE.BAG, L['Bag button features']),
+            [ns.BAG_TYPE.BANK] = generateButton(ns.BAG_TYPE.BANK, L['Bank button features']),
         },
     }
 
@@ -116,7 +149,7 @@ function Addon:LoadOptionFrame()
     self.options = dialog:AddToBlizOptions(ADDON, ADDON)
 end
 
-local OpenToCategory = function(options)
+local function OpenToCategory(options)
     InterfaceOptionsFrame_OpenToCategory(options)
     InterfaceOptionsFrame_OpenToCategory(options)
     OpenToCategory = InterfaceOptionsFrame_OpenToCategory

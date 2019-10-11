@@ -5,22 +5,30 @@
 
 ---@type ns
 local ns = select(2, ...)
-local LibSearch = LibStub('LibItemSearch-1.2')
----@type L
-local L = ns.L
 
-local CONJURED_ITEM_MATCHS = 'tip:' .. L.KEYWORD_CONJURED_ITEM
+---- LUA
+local wipe = table.wipe or wipe
+local type, ipairs = type, ipairs
+
+---- NS
+local Search = ns.Search
+
+---- WOW
+local GetItemInfo = GetItemInfo
+
+---- LOCAL
+local LE_ITEM_QUALITY_POOR = LE_ITEM_QUALITY_POOR
+local CONJURED_ITEM_MATCHS = 'tip:' .. ITEM_CONJURED
 
 local JunkOrder = ns.Addon:NewClass('JunkOrder', ns.Order)
-ns.JunkOrder = JunkOrder
 
-function JunkOrder:Constructor(profile)
+function JunkOrder:Constructor()
     self.orders = {}
-    self:Build(profile)
 end
 
-function JunkOrder:Build(profile)
-    for i, v in ipairs(profile) do
+function JunkOrder:Build()
+    wipe(self.orders)
+    for i, v in ipairs(self.profile) do
         if type(v) == 'number' then
             self.orders[v] = true
         end
@@ -46,7 +54,7 @@ function JunkOrder:IsJunk(item)
 end
 
 local IsConjuredItem = ns.memorizenilable(function(itemId)
-    return LibSearch:Matches('item:' .. itemId, CONJURED_ITEM_MATCHS)
+    return Search:Matches('item:' .. itemId, CONJURED_ITEM_MATCHS)
 end)
 
 function JunkOrder:IsConjuredItem(item)

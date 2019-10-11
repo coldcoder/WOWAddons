@@ -3,16 +3,28 @@
 -- @Link   : https://dengsir.github.io
 -- @Date   : 8/30/2019, 11:46:11 PM
 
-local select, type, assert, tonumber = select, type, assert, tonumber
-
-local GetItemInfo, GetItemFamily, GetPetInfoBySpeciesID = GetItemInfo, GetItemFamily, GetPetInfoBySpeciesID
-local GetContainerNumSlots, GetContainerNumFreeSlots = GetContainerNumSlots, GetContainerNumFreeSlots
-local GetContainerItemLink, GetContainerItemID, GetContainerItemInfo = GetContainerItemLink, GetContainerItemID,
-                                                                       GetContainerItemInfo
-
 ---@type ns
 local ns = select(2, ...)
-local L = ns.L
+
+---- LUA
+local select, type, assert, ipairs = select, type, assert, ipairs
+local tostring, format, strrep = tostring, string.format, string.rep
+local tonumber, band = tonumber, bit.band
+
+---- WOW
+local GetContainerItemID = GetContainerItemID
+local GetContainerItemInfo = GetContainerItemInfo
+local GetContainerItemLink = GetContainerItemLink
+local GetContainerNumFreeSlots = GetContainerNumFreeSlots
+local GetContainerNumSlots = GetContainerNumSlots
+local GetCursorPosition = GetCursorPosition
+local GetItemFamily = GetItemFamily
+local GetItemIcon = GetItemIcon
+local GetItemInfoInstant = GetItemInfoInstant
+local GetItemQualityColor = GetItemQualityColor
+
+---- UI
+local UIParent = UIParent
 
 local function riter(t, i)
     i = i - 1
@@ -66,11 +78,6 @@ end
 local BAGS_SET = tInvert(BAGS)
 local BANKS_SET = tInvert(BANKS)
 
-function ns.IsItemContainer(itemId)
-    local itemEquipLoc = select(5, ns.GetItemInfo(itemId))
-    return itemEquipLoc and itemEquipLoc == 'INVTYPE_BAG'
-end
-
 function ns.IsBag(id)
     return BAGS_SET[id]
 end
@@ -87,23 +94,6 @@ function ns.GetBanks()
     return BANKS
 end
 
-function ns.GetItemInfo(itemId)
-    local itemName, itemLink, itemType, itemSubType, itemEquipLoc, itemQuality, itemLevel, itemTexture
-    if type(itemId) == 'number' then
-        itemName, itemLink, itemQuality, itemLevel, _, itemType, itemSubType, _, itemEquipLoc, itemTexture =
-            GetItemInfo(itemId)
-    elseif type(itemId) == 'string' then
-        assert(false)
-
-        local SpeciesID
-        SpeciesID, itemLevel, itemQuality = itemId:match('battlepet:(%d+):(%d+):(%d+)')
-        itemName, itemTexture, itemSubType = GetPetInfoBySpeciesID(tonumber(SpeciesID))
-        itemType = BATTLE_PET
-        itemSubType = BATTLE_PET_SUBTYPES[itemSubType]
-    end
-    return itemName, itemLink, itemType, itemSubType, itemEquipLoc, itemQuality, itemLevel, itemTexture
-end
-
 function ns.GetItemFamily(itemId)
     if not itemId then
         return 0
@@ -111,7 +101,7 @@ function ns.GetItemFamily(itemId)
     if type(itemId) == 'string' then
         return 0
     end
-    if ns.IsItemContainer(itemId) then
+    if select(4, GetItemInfoInstant(itemId)) == 'INVTYPE_BAG' then
         return 0
     end
     return GetItemFamily(itemId)
@@ -123,10 +113,6 @@ end
 
 function ns.GetBagNumSlots(bag)
     return GetContainerNumSlots(bag)
-end
-
-function ns.FindSlot(item, tarSlot)
-    return ns.Pack:FindSlot(item, tarSlot)
 end
 
 function ns.GetItemId(itemLink)
@@ -143,7 +129,11 @@ function ns.GetItemId(itemLink)
     end
 end
 
-function ns.GetBagSlotID(bag, slot)
+function ns.GetBagSlotLink(bag, slot)
+    return GetContainerItemLink(bag, slot)
+end
+
+function ns.GetBagSlotId(bag, slot)
     local itemLink = GetContainerItemLink(bag, slot)
     if not itemLink then
         return
@@ -161,12 +151,9 @@ function ns.IsBagSlotFull(bag, slot)
         return false
     end
 
-    local stackCount = select(8, GetItemInfo(itemId))
-    if stackCount == 1 then
-        return true
-    end
-
-    return stackCount == ns.GetBagSlotCount(bag, slot)
+    local info = ns.ItemInfoCache:Get(itemId)
+    local stackCount = info.itemStackCount or 1
+    return stackCount == 1 or stackCount == ns.GetBagSlotCount(bag, slot)
 end
 
 function ns.GetBagSlotCount(bag, slot)
@@ -174,7 +161,7 @@ function ns.GetBagSlotCount(bag, slot)
 end
 
 function ns.GetBagSlotFamily(bag, slot)
-    return ns.GetItemFamily(ns.GetBagSlotID(bag, slot))
+    return ns.GetItemFamily(ns.GetBagSlotId(bag, slot))
 end
 
 function ns.IsBagSlotLocked(bag, slot)
@@ -193,7 +180,7 @@ end
 
 if ns.IsRetail then
     function ns.IsFamilyContains(bagFamily, itemFamily)
-        return bit.band(bagFamily, itemFamily) > 0
+        return band(bagFamily, itemFamily) > 0
     end
 else
     function ns.IsFamilyContains(bagFamily, itemFamily)
@@ -210,4 +197,56 @@ function ns.GetClickToken(button, control, shift, alt)
     end
 
     return key + (control and 0x10000 or 0) + (shift and 0x20000 or 0) + (alt and 0x40000 or 0)
+end
+
+function ns.GetCursorPosition()
+    local x, y = GetCursorPosition()
+    local scale = UIParent:GetScale()
+    return x / scale, y / scale
+end
+
+local function CopyFrom(dest, src)
+    dest = dest or {}
+    for k, v in pairs(src) do
+        if type(v) == 'table' then
+            dest[k] = CopyFrom({}, v)
+        else
+            dest[k] = v
+        end
+    end
+    return dest
+end
+
+ns.CopyFrom = CopyFrom
+
+local RED_FONT_COLOR_HEX = RED_FONT_COLOR:GenerateHexColor()
+function ns.GetRuleInfo(item)
+    local t = type(item)
+    if t == 'number' then
+        local name, color
+        local icon = GetItemIcon(item)
+        local info = ns.ItemInfoCache:Get(item)
+        if info:IsReady() then
+            name = info.itemName
+            color = select(4, GetItemQualityColor(info.itemQuality))
+        else
+            name = RETRIEVING_ITEM_INFO
+            color = RED_FONT_COLOR_HEX
+        end
+        return format('|c%s%s|r', color, name), icon
+    elseif t == 'table' then
+        local name, rule
+        if item.comment then
+            name = item.comment
+            rule = item.rule
+        else
+            name = item.rule
+            rule = item.rule
+        end
+        return name, item.icon or ns.UNKNOWN_ICON, rule, item.children and #item.children > 0
+    end
+end
+
+function ns.IsAdvanceRule(item)
+    return type(item) == 'table'
 end

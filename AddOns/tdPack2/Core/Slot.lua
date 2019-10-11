@@ -3,14 +3,15 @@
 -- @Link   : https://dengsir.github.io
 -- @Date   : 8/31/2019, 3:29:19 AM
 
-local InCombatLockdown, PickupContainerItem = InCombatLockdown, PickupContainerItem
-
 ---@type ns
 local ns = select(2, ...)
 
+---- WOW
+local InCombatLockdown = InCombatLockdown
+local PickupContainerItem = PickupContainerItem
+
 ---@class Slot: Base
 local Slot = ns.Addon:NewClass('Slot', ns.Base)
-ns.Slot = Slot
 
 function Slot:Constructor(parent, bag, slot)
     self.bag = bag
@@ -29,7 +30,7 @@ end
 
 ---@return number|string
 function Slot:GetItemId()
-    return ns.GetBagSlotID(self.bag, self.slot)
+    return ns.GetBagSlotId(self.bag, self.slot)
 end
 
 ---@return number

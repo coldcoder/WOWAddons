@@ -8,80 +8,129 @@ local ns = select(2, ...)
 ---@type L
 local L = ns.L
 
-local WEAPON = GetItemClassInfo(LE_ITEM_CLASS_WEAPON) -- 武器
-local ARMOR = GetItemClassInfo(LE_ITEM_CLASS_ARMOR) -- 护甲
-local CONTAINER = GetItemClassInfo(LE_ITEM_CLASS_CONTAINER) -- 容器
-local QUIVER = GetItemClassInfo(LE_ITEM_CLASS_QUIVER) -- 箭袋
-local RECIPE = GetItemClassInfo(LE_ITEM_CLASS_RECIPE) -- 配方
-local TRADEGOODS = GetItemClassInfo(LE_ITEM_CLASS_TRADEGOODS) -- 商品
+---- WOW
+local GetSpellInfo = GetSpellInfo
+local GetItemClassInfo = GetItemClassInfo
+local GetItemSubClassInfo = GetItemSubClassInfo
+
+local function Rule(name, icon, rule, c)
+    local children
+    if c then
+        children = {}
+        local exists = {}
+        for i, v in ipairs(c) do
+            local isAdv = ns.IsAdvanceRule(v)
+            if isAdv and not exists[v.rule] then
+                tinsert(children, v)
+                exists[v.rule] = true
+            end
+            if not isAdv then
+                tinsert(children, v)
+            end
+        end
+    end
+    return {rule = rule, comment = name, icon = icon, children = children}
+end
+
+local function Group(name, icon, children)
+    return Rule(name, icon, nil, children)
+end
+
+local function Type(type, icon, children)
+    local name = GetItemClassInfo(type)
+    return Rule(name, icon, 'type:' .. name, children)
+end
+
+local function SubType(type, subType, icon, children)
+    local name = GetItemSubClassInfo(type, subType)
+    return Rule(name, icon, 'type:' .. name, children)
+end
+
+local function Weapon(subType, icon, children)
+    return SubType(LE_ITEM_CLASS_WEAPON, subType, icon, children)
+end
+
+local function Slot(name, icon, children)
+    return Rule(name, icon, 'slot:' .. name, children)
+end
+
+local function TipLocale(key, icon, children)
+    return Rule(L['COMMENT_' .. key], icon, 'tip:' .. L['KEYWORD_' .. key], children)
+end
+
+local function Tip(tip, icon, children)
+    return Rule(tip, icon, 'tip:' .. tip, children)
+end
+
+local function Spell(id, icon, children)
+    local spellName = GetSpellInfo(id)
+    return Rule(spellName, icon, 'spell:' .. spellName, children)
+end
+
 local CONSUMABLE = GetItemClassInfo(LE_ITEM_CLASS_CONSUMABLE) -- 消耗品
 local QUEST = GetItemClassInfo(LE_ITEM_CLASS_QUESTITEM) -- 任务
 local MISC = GetItemClassInfo(LE_ITEM_CLASS_MISCELLANEOUS) -- 其它
-local PROJECTILE = GetItemClassInfo(LE_ITEM_CLASS_PROJECTILE) -- 弹药
-local REAGENT = GetItemClassInfo(LE_ITEM_CLASS_REAGENT) -- 材料
-local FISHINGPOLE = GetItemSubClassInfo(LE_ITEM_CLASS_WEAPON, LE_ITEM_WEAPON_FISHINGPOLE) -- 鱼竿
 
 ns.DEFAULT_CUSTOM_ORDER = {
     HEARTHSTONE_ITEM_ID, -- 炉石
-    {rule = 'tip:' .. L.KEYWORD_MOUNT}, -- 坐骑
-    5060, -- 潜行者工具
-    2901, -- 矿工锄
-    5956, -- 铁匠锤
-    7005, -- 剥皮刀
-    {rule = 'type:' .. FISHINGPOLE}, -- 鱼竿
-    {rule = 'type:' .. WEAPON}, -- 武器
-    {rule = 'type:' .. ARMOR}, -- 护甲
-    {rule = 'type:' .. CONTAINER}, -- 容器
-    {rule = 'type:' .. QUIVER}, -- 箭袋
-    {rule = 'type:' .. PROJECTILE}, -- 弹药
-    {rule = 'type:' .. RECIPE}, -- 配方
-    {
-        rule = 'type:' .. TRADEGOODS,
-        children = {
-            {rule = 'tip:' .. L.KEYWORD_CLASS}, -- 职业
-        },
-    }, -- 商品
-    {
-        rule = 'type:' .. CONSUMABLE,
-        children = {
-            {rule = 'tip:' .. L.KEYWORD_CLASS}, -- 职业
-            {rule = 'tip:' .. L.KEYWORD_FOOD}, -- 食物
-            {rule = 'tip:' .. L.KEYWORD_WATER}, -- 水
-        },
-    }, -- 消耗品
-    {rule = 'type:' .. MISC}, -- 杂项
-    {rule = 'type:' .. REAGENT}, -- 材料
-    {rule = 'type:' .. QUEST}, -- 任务
-}
-
-ns.DEFAULT_EQUIP_LOC_ORDER = {
-    'INVTYPE_2HWEAPON', -- 双手
-    'INVTYPE_WEAPON', -- 单手
-    'INVTYPE_WEAPONMAINHAND', -- 主手
-    'INVTYPE_WEAPONOFFHAND', -- 副手
-    'INVTYPE_SHIELD', -- 副手
-    'INVTYPE_HOLDABLE', -- 副手物品
-    'INVTYPE_RANGED', -- 远程
-    'INVTYPE_RELIC', -- 圣物
-    -- 'INVTYPE_RANGEDRIGHT',      --远程
-    -- 'INVTYPE_THROWN',           --投掷
-    'INVTYPE_HEAD', -- 头部
-    'INVTYPE_SHOULDER', -- 肩部
-    'INVTYPE_CHEST', -- 胸部
-    'INVTYPE_ROBE', -- 胸部
-    'INVTYPE_HAND', -- 手
-    'INVTYPE_LEGS', -- 腿部
-    'INVTYPE_WRIST', -- 手腕
-    'INVTYPE_WAIST', -- 腰部
-    'INVTYPE_FEET', -- 脚
-    'INVTYPE_CLOAK', -- 背部
-    'INVTYPE_NECK', -- 颈部
-    'INVTYPE_FINGER', -- 手指
-    'INVTYPE_TRINKET', -- 饰品
-    'INVTYPE_BODY', -- 衬衣
-    'INVTYPE_TABARD', -- 战袍
-    'INVTYPE_WEAPONMAINHAND_PET', -- 主要攻击
-    'INVTYPE_AMMO', -- 弹药
-    'INVTYPE_BAG', -- 背包
-    'INVTYPE_QUIVER', -- 箭袋
+    TipLocale('MOUNT', 132261), -- 坐骑
+    Group(L['Tools'], 134065, {
+        5060, -- 潜行者工具
+        2901, -- 矿工锄
+        5956, -- 铁匠锤
+        7005, -- 剥皮刀
+        Weapon(LE_ITEM_WEAPON_FISHINGPOLE, 132932), -- 鱼竿
+    }), --
+    Rule(EQUIPSET_EQUIP, 132722, 'equip', {
+        Slot(INVTYPE_2HWEAPON, 135324), -- 双手
+        Slot(INVTYPE_WEAPONMAINHAND, 133045), -- 主手
+        Slot(INVTYPE_WEAPON, 135641), -- 单手
+        Slot(INVTYPE_SHIELD, 134955), -- 副手盾
+        Slot(INVTYPE_WEAPONOFFHAND, 134955), -- 副手
+        Slot(INVTYPE_HOLDABLE, 134333), -- 副手物品
+        Slot(INVTYPE_RANGED, 135498), -- 远程
+        Weapon(LE_ITEM_WEAPON_GUNS, 135610), -- 枪
+        Weapon(LE_ITEM_WEAPON_CROSSBOW, 135533), -- 弩
+        Weapon(LE_ITEM_WEAPON_THROWN, 135427), -- 投掷武器
+        Slot(INVTYPE_RELIC, 134915), -- 圣物
+        Slot(INVTYPE_HEAD, 133136), -- 头部
+        Slot(INVTYPE_NECK, 133294), -- 颈部
+        Slot(INVTYPE_SHOULDER, 135033), -- 肩部
+        Slot(INVTYPE_CLOAK, 133768), -- 背部
+        Slot(INVTYPE_CHEST, 132644), -- 胸部
+        Slot(INVTYPE_ROBE, 132644), -- 胸部
+        Slot(INVTYPE_WRIST, 132608), -- 手腕
+        Slot(INVTYPE_HAND, 132948), -- 手
+        Slot(INVTYPE_WAIST, 132511), -- 腰部
+        Slot(INVTYPE_LEGS, 134588), -- 腿部
+        Slot(INVTYPE_FEET, 132541), -- 脚
+        Slot(INVTYPE_FINGER, 133345), -- 手指
+        Slot(INVTYPE_TRINKET, 134010), -- 饰品
+        Slot(INVTYPE_BODY, 135022), -- 衬衣
+        Slot(INVTYPE_TABARD, 135026), -- 战袍
+    }), -- 装备
+    Type(LE_ITEM_CLASS_CONTAINER, 133652), -- 容器
+    Type(LE_ITEM_CLASS_QUIVER, 134407), -- 箭袋
+    Type(LE_ITEM_CLASS_PROJECTILE, 132382), -- 弹药
+    Type(LE_ITEM_CLASS_RECIPE, 134939), -- 配方
+    Type(LE_ITEM_CLASS_TRADEGOODS, 132905, {
+        TipLocale('CLASS', 132273), -- 职业
+    }), -- 商品
+    Rule(CONSUMABLE, 134829, 'type:' .. CONSUMABLE .. ' & tip:!' .. QUEST, {
+        TipLocale('CLASS', 132273), -- 职业
+        Spell(746, 133685), -- 急救
+        Spell(433, 133945), -- 食物
+        Spell(430, 132794), -- 水
+        Spell(439, 134830), -- 治疗药水
+        Spell(438, 134851), -- 法力药水
+    }), -- 消耗品
+    Type(LE_ITEM_CLASS_REAGENT, 133587), -- 材料
+    Rule(MISC, 134237, 'type:!' .. QUEST .. ' & tip:!' .. QUEST, {
+        Type(LE_ITEM_CLASS_MISCELLANEOUS, 134400), -- 其它
+        Type(LE_ITEM_CLASS_KEY, 134237), -- 钥匙
+    }), --
+    Rule(QUEST, 133469, 'type:' .. QUEST .. ' | tip:' .. QUEST, {
+        Tip(ITEM_STARTS_QUEST, 132836), -- 接任务
+        Rule(nil, 133942, 'spell'), --
+    }), -- 任务
 }

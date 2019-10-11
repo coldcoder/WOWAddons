@@ -3,48 +3,50 @@
 -- @Link   : https://dengsir.github.io
 -- @Date   : 9/1/2019, 12:50:23 AM
 
-local ipairs, type = ipairs, type
-local tinsert, wipe = table.insert, table.wipe
-local format = string.format
-
 ---@type ns
 local ns = select(2, ...)
+local Search = ns.Search
 
-local LibSearch = LibStub('LibItemSearch-1.2')
+---- LUA
+local ipairs, type = ipairs, type
+local tinsert, wipe = table.insert, table.wipe
+local format, tostring = string.format, tostring
 
+---@class CustomOrder: Order
 local CustomOrder = ns.Addon:NewClass('CustomOrder', ns.Order)
-ns.CustomOrder = CustomOrder
 
-function CustomOrder:Constructor(profile)
+function CustomOrder:Constructor()
     self.methods = {
         function(item)
             return self.simpleOrders[item:GetItemId()]
         end, function(item)
             return self:GetAdvanceOrder(item:GetItemLink())
-        end, function(item)
-            return self.simpleOrders['#' .. item:GetItemType() .. '##' .. item:GetItemSubType()]
-        end, function(item)
-            return self.simpleOrders['##' .. item:GetItemSubType()]
-        end, function(item)
-            return self.simpleOrders['#' .. item:GetItemType()]
         end,
+        -- function(item)
+        --     return self.simpleOrders['#' .. item:GetItemType() .. '##' .. item:GetItemSubType()]
+        -- end, function(item)
+        --     return self.simpleOrders['##' .. item:GetItemSubType()]
+        -- end, function(item)
+        --     return self.simpleOrders['#' .. item:GetItemType()]
+        -- end,
     }
 
     self.simpleOrders = {}
     self.advanceRules = {}
-    self:Build(profile, self.advanceRules)
 end
 
 function CustomOrder:GetAdvanceOrder(link, rules)
     for _, v in ipairs(rules or self.advanceRules) do
-        if LibSearch:Matches(link, v.rule) then
+        if not v.rule or Search:Matches(link, v.rule) then
             if v.children then
                 local order = self:GetAdvanceOrder(link, v.children)
                 if order then
                     return order
                 end
             end
-            return v.order
+            if v.rule then
+                return v.order
+            end
         end
     end
 end
@@ -71,10 +73,11 @@ function CustomOrder:BuildInternal(profile, rules, last)
     return last
 end
 
-function CustomOrder:Build(profile)
+function CustomOrder:Build()
     wipe(self.advanceRules)
     wipe(self.simpleOrders)
-    self.default = self:BuildInternal(profile, self.advanceRules, 0)
+    self.default = self:BuildInternal(self.profile, self.advanceRules, 0)
+    self.formatter = '%0' .. #tostring(self.default) .. 'd'
 end
 
 ---@param item Item
@@ -85,9 +88,10 @@ function CustomOrder:GetOrderInternal(item)
             return order
         end
     end
+    print(item:GetItemLink())
     return self.default
 end
 
 function CustomOrder:GetOrder(item)
-    return format('%08d', self:GetOrderInternal(item))
+    return format(self.formatter, self:GetOrderInternal(item))
 end

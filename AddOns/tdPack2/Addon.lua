@@ -3,150 +3,77 @@
 -- @Link   : https://dengsir.github.io
 -- @Date   : 8/30/2019, 11:36:34 PM
 
+local select, assert, unpack, wipe = select, assert, table.unpack or unpack, table.wipe or wipe
+local CopyTable, tInvert = CopyTable, tInvert
+
 ---@type ns
 local ADDON, ns = ...
-local Addon = LibStub('AceAddon-3.0'):NewAddon(ADDON, 'LibClass-2.0', 'AceConsole-3.0')
+local Addon = LibStub('AceAddon-3.0'):NewAddon(ADDON, 'LibClass-2.0', 'AceEvent-3.0', 'AceConsole-3.0')
 
 ns.Addon = Addon
 ns.L = LibStub('AceLocale-3.0'):GetLocale(ADDON)
 ns.ICON = [[Interface\AddOns\tdPack2\Resource\INV_Pet_Broom]]
 ns.IsRetail = WOW_PROJECT_ID == WOW_PROJECT_MAINLINE
+ns.UNKNOWN_ICON = 134400
+ns.GUI = LibStub('tdGUI-1.0')
 
-local CMD_ALL = 'all'
-local CMD_BAG = 'bag'
-local CMD_BANK = 'bank'
-local ORDER_ASC = 'asc'
-local ORDER_DESC = 'desc'
-
-local METHODS = tInvert{CMD_ALL, CMD_BAG, CMD_BANK}
-local ORDERS = tInvert{ORDER_ASC, ORDER_DESC}
-
-function Addon:OnInitialize(args)
+function Addon:OnInitialize()
     local defaults = {
         profile = {
             reverse = false,
             console = true,
+            firstLoad = true,
+            applyLibItemSearch = false,
+            ruleOptionWindow = {point = 'CENTER', width = 637, height = 637},
             actions = {
-                bag = {
-                    [ns.CLICK_TOKENS.LEFT] = 'SORT', --
-                    [ns.CLICK_TOKENS.RIGHT] = 'OPEN_OPTIONS', --
-                    [ns.CLICK_TOKENS.CONTROL_LEFT] = 'SORT_BAG', --
-                }, --
-                bank = {
-                    [ns.CLICK_TOKENS.LEFT] = 'SORT', --
-                    [ns.CLICK_TOKENS.RIGHT] = 'OPEN_OPTIONS', --
-                    [ns.CLICK_TOKENS.CONTROL_LEFT] = 'SORT_BANK', --
-                }, --
+                [ns.COMMAND.BAG] = {
+                    [ns.CLICK_TOKENS.LEFT] = 'SORT',
+                    [ns.CLICK_TOKENS.RIGHT] = 'OPEN_RULE_OPTIONS',
+                    [ns.CLICK_TOKENS.CONTROL_LEFT] = 'SORT_BAG',
+                    [ns.CLICK_TOKENS.CONTROL_RIGHT] = 'OPEN_OPTIONS',
+                },
+                [ns.COMMAND.BANK] = {
+                    [ns.CLICK_TOKENS.LEFT] = 'SORT',
+                    [ns.CLICK_TOKENS.RIGHT] = 'OPEN_RULE_OPTIONS',
+                    [ns.CLICK_TOKENS.CONTROL_LEFT] = 'SORT_BANK',
+                    [ns.CLICK_TOKENS.CONTROL_RIGHT] = 'OPEN_OPTIONS',
+                },
             },
+            rules = {},
         },
     }
 
     self.db = LibStub('AceDB-3.0'):New('TDDB_PACK2', defaults, true)
 
-    self:RegisterChatCommand('tdp', 'OnSlash')
-
-    if self.LoadOptionFrame then
-        self:LoadOptionFrame()
-    end
+    self.db:RegisterCallback('OnProfileChanged', function()
+        self:OnProfileChanged()
+    end)
 end
 
-function Addon:OnSlash(text)
-    local args = {}
-    local cmd, offset
-    repeat
-        cmd, offset = self:GetArgs(text, nil, offset)
-        if METHODS[cmd] then
-            method = cmd
-        end
-        if ORDERS[cmd] then
-            order = cmd
-        end
-    until not cmd
-
-    self:Pack(self:ParseArgs(unpack(args)))
+function Addon:OnEnable()
+    self:InitOptionFrame()
+    self:InitCommands()
+    self:OnProfileChanged()
 end
 
-function Addon:ParseArgs(...)
-    local method, order
-    local opts = {}
-
-    for i = 1, select('#', ...) do
-        local cmd = select(i, ...)
-        if METHODS[cmd] then
-            method = cmd
-        end
-        if ORDERS[cmd] then
-            order = cmd
-        end
+function Addon:OnProfileChanged()
+    if self.db.profile.firstLoad then
+        self.db.profile.firstLoad = false
+        self.db.profile.rules.sorting = CopyTable(ns.DEFAULT_CUSTOM_ORDER)
     end
 
-    if not method or method == CMD_ALL then
-        opts.bank = true
-        opts.bag = true
-    elseif method == CMD_BAG then
-        opts.bag = true
-    elseif method == CMD_BANK then
-        opts.bank = true
-    end
-
-    if not order then
-        opts.reverse = self.db.profile.reverse
-    elseif order == ORDER_ASC then
-        opts.reverse = false
-    elseif order == ORDER_DESC then
-        opts.reverse = true
-    end
-
-    return opts
+    self:SendMessage('TDPACK_PROFILE_CHANGED')
 end
 
-function Addon:IsConsoleEnabled()
-    return self.db.profile.console
+function Addon:OnModuleCreated(module)
+    local name = module:GetName()
+    assert(not ns[name])
+    ns[name] = module
 end
 
-function Addon:Pack(...)
-    ns.Pack:Start(self:ParseArgs(...))
-end
-
-local ACTIONS = {
-    SORT = function()
-        Addon:Pack()
-    end,
-    SORT_BAG = function()
-        Addon:Pack('bag')
-    end,
-    SORT_BAG_ASC = function()
-        Addon:Pack('bag', 'asc')
-    end,
-    SORT_BAG_DESC = function()
-        Addon:Pack('bag', 'desc')
-    end,
-    SORT_BANK = function()
-        Addon:Pack('bank')
-    end,
-    SORT_BANK_ASC = function()
-        Addon:Pack('bank', 'asc')
-    end,
-    SORT_BANK_DESC = function()
-        Addon:Pack('bank', 'desc')
-    end,
-    OPEN_RULE_OPTIONS = function()
-        Addon:OpenRuleOption()
-    end,
-    OPEN_OPTIONS = function()
-        Addon:OpenOption()
-    end,
-}
-
-function Addon:RunAction(bagType, token)
-    local action = self:GetBagClickOption(bagType, token)
-    if not action then
-        return
-    end
-    local func = ACTIONS[action]
-    if func then
-        func()
-    end
+function Addon:OnClassCreated(class, name)
+    assert(not ns[name])
+    ns[name] = class
 end
 
 function Addon:GetBagClickOption(bagType, token)
@@ -155,4 +82,36 @@ end
 
 function Addon:SetBagClickOption(bagType, token, action)
     self.db.profile.actions[bagType][token] = action
+end
+
+function Addon:ResetSortingRules()
+    local sorting = wipe(self.db.profile.rules.sorting)
+    ns.CopyFrom(sorting, ns.DEFAULT_CUSTOM_ORDER)
+    self:SendMessage('TDPACK_SORTING_RULES_UPDATE')
+end
+
+function Addon:GetSortingRules()
+    return self.db.profile.rules.sorting
+end
+
+function Addon:GetOption(key)
+    return self.db.profile[key]
+end
+
+function Addon:SetOption(key, value)
+    self.db.profile[key] = value
+    self:SendMessage('TDPACK_OPTION_CHANGED_' .. key, key, value)
+end
+
+function Addon:AddRule(item, where)
+    where.children = where.children or {}
+    tinsert(where.children, item)
+    self:SendMessage('TDPACK_SORTING_RULES_UPDATE')
+end
+
+function Addon:EditRule(item, where)
+    where.rule = item.rule
+    where.comment = item.comment
+    where.icon = item.icon
+    self:SendMessage('TDPACK_SORTING_RULES_UPDATE')
 end

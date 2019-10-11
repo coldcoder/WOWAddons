@@ -3,18 +3,30 @@
 -- @Link   : https://dengsir.github.io
 -- @Date   : 8/31/2019, 3:14:49 AM
 
-local select, ipairs = select, ipairs
-local tinsert, tremove, wipe = table.insert, table.remove, wipe
-
-local InCombatLockdown, UnitIsDead, GetCursorInfo = InCombatLockdown, UnitIsDead, GetCursorInfo
-
 ---@type ns
 local ns = select(2, ...)
-local ripairs = ns.ripairs
-local L = ns.L
 
+---- NS
+local L = ns.L
+local Bag = ns.Bag
+local Slot = ns.Slot
+local Addon = ns.Addon
+local BAG_TYPE = ns.BAG_TYPE
+
+---- LUA
+local ripairs = ns.ripairs
+local select, ipairs = select, ipairs
+local tinsert, tremove, wipe = table.insert, table.remove, wipe
+local format = string.format
+local coroutine = coroutine
+
+---- WOW
+local GetCursorInfo = GetCursorInfo
+local InCombatLockdown = InCombatLockdown
+local UnitIsDead = UnitIsDead
+
+----@class Pack
 local Pack = ns.Addon:NewModule('Pack', 'AceEvent-3.0', 'AceTimer-3.0')
-ns.Pack = Pack
 
 local STATUS_FREE = 0
 local STATUS_READY = 1
@@ -25,7 +37,7 @@ local STATUS_PACKED = 5
 local STATUS_FINISH = 6
 local STATUS_CANCEL = 7
 
-function Pack:OnEnable()
+function Pack:OnInitialize()
     self.isBankOpened = false
     self.status = STATUS_FREE
     ---@type Slot[]
@@ -99,9 +111,10 @@ function Pack:Start(opts)
         return
     end
 
+    self.reverse = opts.reverse()
     self.opts = opts
     self:SetStatus(STATUS_READY)
-    self:ScheduleRepeatingTimer('OnIdle', 0.05)
+    self:ScheduleRepeatingTimer('OnIdle', 0.03)
 end
 
 function Pack:Stop()
@@ -113,10 +126,10 @@ function Pack:Stop()
 end
 
 function Pack:Message(text)
-    if not ns.Addon:IsConsoleEnabled() then
+    if not Addon:GetOption('console') then
         return
     end
-    ns.Addon:Print(text)
+    Addon:Print(text)
 end
 
 function Pack:Warning(text)
@@ -144,7 +157,7 @@ end
 function Pack:StackReady()
     for bag in self:IterateBags() do
         for slot = 1, ns.GetBagNumSlots(bag) do
-            tinsert(self.slots, ns.Slot:New(nil, bag, slot))
+            tinsert(self.slots, Slot:New(nil, bag, slot))
         end
     end
 end
@@ -209,12 +222,12 @@ function Pack:PackReady()
     local bag, bank
 
     if self:IsOptionBag() then
-        bag = ns.Bag:New('bag')
+        bag = Bag:New(BAG_TYPE.BAG)
         tinsert(self.bags, bag)
     end
 
     if self:IsOptionBank() then
-        bank = ns.Bag:New('bank')
+        bank = Bag:New(BAG_TYPE.BANK)
         tinsert(self.bags, bank)
 
         -- if tdPack:IsLoadToBag() and tdPack:IsSaveToBank() then
@@ -337,5 +350,5 @@ function Pack:IsOptionBank()
 end
 
 function Pack:IsOptionReverse()
-    return self.opts.reverse
+    return self.reverse
 end

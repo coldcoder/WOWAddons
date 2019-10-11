@@ -7,19 +7,9 @@ if true then
     return
 end
 
+---@type ns
 local ns = select(2, ...)
 local Addon = ns.Addon
 
-function SortBags()
-    Addon:Pack('bag')
-end
-
-function SortBankBags()
-    Addon:Pack('bank')
-end
-
-function SortReagentBankBags()
-end
-
-function DepositReagentBank()
-end
+_G.SortBags = Addon:Generate(ns.COMMAND.BAG)
+_G.SortBankBags = Addon:Generate(ns.COMMAND.BANK)

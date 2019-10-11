@@ -5,16 +5,35 @@
 
 ---@type ns
 local ns = select(2, ...)
-local Addon = ns.Addon
 
 ---@class Order
-local Order = Addon:NewClass('Order')
-ns.Order = Order
+local Order = ns.Addon:NewClass('Order')
+
+function Order:Constructor(profile)
+    self:RequestRebuild(profile)
+end
 
 function Order:GetOrder(item)
     error('Not implemented')
 end
 
 function Order._Meta:__call(item)
+    if self.isDirty then
+        self:Build()
+        self.isDirty = nil
+    end
     return self:GetOrder(item)
+end
+
+function Order:RequestRebuild(profile)
+    profile = profile or self.profile
+
+    if not self.isDirty or self.profile ~= profile then
+        self.profile = profile
+        self.isDirty = true
+    end
+end
+
+function Order:Build()
+    error('Not implemented')
 end

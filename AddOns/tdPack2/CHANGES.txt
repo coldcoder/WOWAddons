@@ -1,10 +1,12 @@
-tag 7fddf02e832bf06b13e228c81c76d070195f9738 0.0.9
-Author:	Dencer <tdaddon@163.com>
-Date:	Thu Sep 26 21:15:35 2019 +0800
+tag 0738f884c6a3814052cadc64a355dd00b01e0fa6 1.0.1
+Author:	unknown <S1596@wowshga.internal>
+Date:	Fri Oct 11 11:39:44 2019 +0800
 
-commit 528398040d14b4e791432fbd0f8db85cd9e96ec9
+commit 1fb36dfbd11541d682548d86a8c8c77ee156517f
 Author: Dencer <tdaddon@163.com>
-Date:   Thu Sep 26 21:11:03 2019 +0800
+Date:   Fri Oct 11 02:03:14 2019 +0800
 
-    fix: combuctor button
+    chore: update pkgmeta
+    
+    (cherry picked from commit eae1fd31d587bf8fbf6d41a9a288b0ed8f11bcdb)
 
